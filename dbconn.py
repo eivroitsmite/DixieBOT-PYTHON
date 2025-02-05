@@ -12,7 +12,6 @@ PASSWORD = 'eERjntoq!f@FEx10=X!pOmcr'
 _connection = None
 
 def create_connection():
-    """Creates or retrieves a global database connection."""
     global _connection
     try:
         if _connection is None or not _connection.is_connected():
@@ -28,6 +27,7 @@ def create_connection():
         print("Error connecting to database:", e)
         return None
 
+
 def create_table():
     """Creates the 'user_data' table if it does not already exist."""
     connection = create_connection()
@@ -36,11 +36,12 @@ def create_table():
     try:
         cursor = connection.cursor()
         create_table_query = """
-        CREATE TABLE IF NOT EXISTS user_data (
-            join_time DATETIME,
-            user_id VARCHAR(100) PRIMARY KEY,
-            password VARCHAR(100)
-        );
+            CREATE TABLE IF NOT EXISTS user_data (
+                join_time DATETIME NOT NULL,
+                user_id VARCHAR(100) PRIMARY KEY,
+                password VARCHAR(100) NOT NULL
+            );
+
         """
         cursor.execute(create_table_query)
         connection.commit()
@@ -120,21 +121,30 @@ def get_join_time_by_user_id(user_id):
 
 
 def check_user_exists(user_id):
-    """Checks if a user exists in the table based on user_id."""
     connection = create_connection()
     if connection is None:
+        print("No connection could be established.")
         return False
+
     try:
-        cursor = connection.cursor()
-        select_query = "SELECT 1 FROM user_data WHERE user_id = %s;"
-        cursor.execute(select_query, (user_id,))
+        cursor = connection.cursor()  # Fails if connection is None
+        cursor.execute("SELECT COUNT(*) FROM user_data WHERE user_id = %s", (user_id,))
+
         result = cursor.fetchone()
-        return bool(result)
+
+        # Ensure to close the cursor
+        cursor.close()
+
+        if result and result[0] > 0:
+            return True
+        return False
+
     except Error as e:
-        print("Error checking if user exists:", e)
+        print(f"Error while checking user exists: {e}")
         return False
     finally:
-        cursor.close()
+        if 'cursor' in locals():  # Ensure cursor is closed if it was created
+            cursor.close()
 
 def delete_user_by_id(user_id):
     """Deletes a user from the user_data table based on user_id."""

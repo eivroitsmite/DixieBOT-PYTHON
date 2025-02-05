@@ -7,17 +7,21 @@ import asyncio
 from datetime import datetime, timedelta
 import sys, traceback
 
-from security import Security
+from verification import Security
 
 
 from dbconn import (
     create_table,
+)
+from dbconnMOD import (
+     create_mod_log_table,
 )
 
 load_dotenv()
 
 
 create_table()
+create_mod_log_table()
 
 
 intents = discord.Intents.default()
@@ -25,7 +29,7 @@ intents.message_content = True
 intents.guilds = True
 intents.members = True
 
-bot = commands.Bot(command_prefix='*', intents=intents)
+bot = commands.Bot(command_prefix='!', intents=intents)
 
 warnings = {}
 
