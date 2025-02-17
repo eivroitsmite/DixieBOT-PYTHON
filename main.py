@@ -42,12 +42,12 @@ async def on_ready():
     print(f'Yo, It\'s me, {bot.user}')
     
     for filename in os.listdir("./cogs"):
-        if(filename.endswith('.py')): 
-            print("Cog : " + filename[:-3] + " has been loaded")
-            await bot.load_extension(f"cogs.{filename[:-3]}")
-            await bot.add_cog(Security(bot))
-            
-    
+        if filename.endswith('.py') and filename != "Security.py":
+            cog_name = filename[:-3]
+            print(f"Cog : {cog_name} has been loaded")
+            await bot.load_extension(f"cogs.{cog_name}")
+
+    await bot.add_cog(Security(bot))  # Now this only loads once
 
 try:
     bot.run(DISCORD_TOKEN)

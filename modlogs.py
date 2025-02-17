@@ -1,15 +1,8 @@
 import mysql.connector
 from mysql.connector import Error
 from datetime import datetime
+import os
 
-# Database connection details for the mod_logs database
-HOST = 'uk02-sql.pebblehost.com'
-PORT = 3306
-DATABASE = 'customer_829856_CCACModerationDB'
-USER = 'customer_829856_CCACModerationDB'
-PASSWORD = 'BlP^qL9Y!++eLygv2nlMcsXP'
-
-# Global connection variable
 _connection = None
 
 def create_connection():
@@ -18,11 +11,11 @@ def create_connection():
     try:
         if _connection is None or not _connection.is_connected():
             _connection = mysql.connector.connect(
-                host=HOST,
-                port=PORT,
-                user=USER,
-                password=PASSWORD,
-                database=DATABASE
+                host=os.getenv('MOD_HOST'),
+                port=os.getenv('MOD_PORT'),
+                user=os.getenv('MOD_USER'),
+                password=os.getenv('MOD_PASSWORD'),
+                database=os.getenv('MOD_DATABASE')
             )
         return _connection
     except Error as e:

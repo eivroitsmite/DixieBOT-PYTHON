@@ -1,14 +1,7 @@
 import mysql.connector
 from mysql.connector import Error
+import os
 
-# Database connection details
-HOST = 'uk02-sql.pebblehost.com'
-PORT = 3306
-DATABASE = 'customer_829856_VerificationSystemCCAC'
-USER = 'customer_829856_VerificationSystemCCAC'
-PASSWORD = 'eERjntoq!f@FEx10=X!pOmcr'
-
-# Global connection variable
 _connection = None
 
 def create_connection():
@@ -16,11 +9,11 @@ def create_connection():
     try:
         if _connection is None or not _connection.is_connected():
             _connection = mysql.connector.connect(
-                host=HOST,
-                port=PORT,
-                user=USER,
-                password=PASSWORD,
-                database=DATABASE
+                host=os.getenv('HOST'),
+                port=os.getenv('PORT'),
+                user=os.getenv('USER'),
+                password=os.getenv('PASSWORD'),
+                database=os.getenv('DATABASE')
             )
         return _connection
     except Error as e:
